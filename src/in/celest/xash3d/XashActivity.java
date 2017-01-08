@@ -42,6 +42,7 @@ public class XashActivity extends Activity {
 	public static final int sdk = Integer.valueOf(Build.VERSION.SDK);
 	public static final String TAG = "XASH3D:XashActivity";
 	public static int mPixelFormat;
+	public static int mGLESVersion;
 	protected static ViewGroup mLayout;
 	public static JoystickHandler handler;
 	public static ImmersiveMode mImmersiveMode;
@@ -213,6 +214,7 @@ public class XashActivity extends Activity {
 		InstallReceiver.extractPAK(this, false);
 
 		mPixelFormat = mPref.getInt("pixelformat", 0);
+		mGLESVersion = mPref.getInt("glesver", 1);
 		mUseVolume = mPref.getBoolean("usevolume", false);
 		if( mPref.getBoolean("enableResizeWorkaround", true) )
 			AndroidBug5497Workaround.assistActivity(this);
@@ -634,6 +636,10 @@ View.OnKeyListener {
 	public boolean InitGL() {
 		try
 		{
+			Log.e(TAG, "Init GLES version: "+XashActivity.mGLESVersion);
+			int renderable_type = 1;
+			if(XashActivity.mGLESVersion == 2)
+				renderable_type = 4;
 			EGL10 egl = (EGL10)EGLContext.getEGL();
 			
 			if( egl == null )
@@ -653,55 +659,58 @@ View.OnKeyListener {
 			int[] version = new int[2];
 			if( !egl.eglInitialize(dpy, version) )
 			{
-				Log.e(TAG, "No EGL config available");
+				Log.e(TAG, "Can't initialize EGL");
 				return false;
 			}
-			
+			int depth = 16;
 			int[][] configSpec = 
 			{{
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   8,
 				EGL10.EGL_GREEN_SIZE,  8,
 				EGL10.EGL_BLUE_SIZE,   8,
 				EGL10.EGL_ALPHA_SIZE, 8,
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}, {
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   8,
 				EGL10.EGL_GREEN_SIZE,  8,
 				EGL10.EGL_BLUE_SIZE,   8,
 				EGL10.EGL_ALPHA_SIZE, 0,
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}, {
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   5,
 				EGL10.EGL_GREEN_SIZE,  6,
 				EGL10.EGL_BLUE_SIZE,   5,
 				EGL10.EGL_ALPHA_SIZE, 0,
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}, {
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   5,
 				EGL10.EGL_GREEN_SIZE,  5,
 				EGL10.EGL_BLUE_SIZE,   5,
 				EGL10.EGL_ALPHA_SIZE, 1,
-
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}, {
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   4,
 				EGL10.EGL_GREEN_SIZE,  4,
 				EGL10.EGL_BLUE_SIZE,   4,
 				EGL10.EGL_ALPHA_SIZE,   4,
-
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}, {
-				EGL10.EGL_DEPTH_SIZE,   8,
+				EGL10.EGL_DEPTH_SIZE, depth,
 				EGL10.EGL_RED_SIZE,   3,
 				EGL10.EGL_GREEN_SIZE,  3,
 				EGL10.EGL_BLUE_SIZE,   2,
 				EGL10.EGL_ALPHA_SIZE,   0,
-
+				EGL10.EGL_RENDERABLE_TYPE, renderable_type,
 				EGL10.EGL_NONE
 			}};
 			EGLConfig[] configs = new EGLConfig[1];
@@ -716,7 +725,7 @@ View.OnKeyListener {
 			int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
 			int contextAttrs[] = new int[]
 			{
-				EGL_CONTEXT_CLIENT_VERSION, 1,
+				EGL_CONTEXT_CLIENT_VERSION, XashActivity.mGLESVersion,
 				EGL10.EGL_NONE
 			};
 			EGLContext ctx = egl.eglCreateContext(dpy, config, EGL10.EGL_NO_CONTEXT, contextAttrs);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Xash3D</string>
-	<string name="launcher_name" translatable="false">Xash3D</string>
-	<string name="launcher_name_test" translatable="false">Xash3D (test)</string>
+    <string name="app_name" translatable="false">Xash3D test2</string>
+	<string name="launcher_name" translatable="false">Xash3D test2</string>
+	<string name="launcher_name_test" translatable="false">Xash3D (test2)</string>
 	<string name="version_string" translatable="false">v0.18</string>
 
     <string name="launch_button">Launch Xash3D!</string>

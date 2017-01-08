@@ -69,6 +69,7 @@ public class LauncherActivity extends Activity {
 	static CheckBox immersiveMode;
 	static SharedPreferences mPref;
 	static Spinner pixelSpinner;
+	static Spinner glesverSpinner;
 	static TextView tvResPath;
 	
 	String getDefaultPath()
@@ -118,6 +119,7 @@ public class LauncherActivity extends Activity {
 		checkUpdates = (CheckBox)findViewById( R.id.check_updates );
 		updateToBeta = (CheckBox)findViewById( R.id.check_betas );
 		pixelSpinner = (Spinner) findViewById( R.id.pixelSpinner );
+		glesverSpinner = (Spinner) findViewById( R.id.glesverSpinner );
 		resizeWorkaround = (ToggleButton) findViewById( R.id.enableResizeWorkaround );
 		tvResPath    = (TextView) findViewById( R.id.textView_path );
 		immersiveMode = (CheckBox) findViewById( R.id.immersive_mode );
@@ -133,6 +135,16 @@ public class LauncherActivity extends Activity {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
 		pixelSpinner.setAdapter(adapter);
+		
+		final String[] gleslist = 
+		{
+			"OpenGL ES 1.1",
+			"OpenGL ES 2.0"
+		};
+		adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, gleslist);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		glesverSpinner.setAdapter(adapter);
+		
 		Button selectFolderButton = ( Button ) findViewById( R.id.button_select );
 	selectFolderButton.setOnClickListener(new View.OnClickListener(){
 	       @Override
@@ -164,6 +176,7 @@ public class LauncherActivity extends Activity {
 		updatePath(mPref.getString("basedir", getDefaultPath()));
 		cmdArgs.setText(mPref.getString("argv","-dev 3 -log"));
 		pixelSpinner.setSelection(mPref.getInt("pixelformat", 0));
+		glesverSpinner.setSelection(mPref.getInt("glesver",1)-1);
 		resizeWorkaround.setChecked(mPref.getBoolean("enableResizeWorkaround", true));
 		
 		if( sdk >= 19 )
@@ -208,6 +221,7 @@ public class LauncherActivity extends Activity {
 		editor.putBoolean("usevolume",useVolume.isChecked());
 		editor.putString("basedir", resPath.getText().toString());
 		editor.putInt("pixelformat", pixelSpinner.getSelectedItemPosition());
+		editor.putInt("glesver",glesverSpinner.getSelectedItemPosition()+1);
 		editor.putBoolean("enableResizeWorkaround",resizeWorkaround.isChecked());
 		editor.putBoolean("check_updates", checkUpdates.isChecked());
 		if( sdk >= 19 )
