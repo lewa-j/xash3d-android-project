@@ -53,7 +53,7 @@ import java.net.URL;
 
 import org.json.*;
 
-import in.celest.xash3d.hl.R;
+import in.celest.xash3d.hl.test2.R;
 import in.celest.xash3d.XashActivity;
 
 public class LauncherActivity extends Activity {

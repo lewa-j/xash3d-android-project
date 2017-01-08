@@ -26,7 +26,7 @@ import java.lang.*;
 import java.util.List;
 import java.security.MessageDigest;
 
-import in.celest.xash3d.hl.BuildConfig;
+import in.celest.xash3d.hl.test2.BuildConfig;
 import in.celest.xash3d.XashConfig;
 
 /**
@@ -1068,7 +1068,7 @@ class JoystickHandler_v12 extends JoystickHandler
 		// how event can be from null device, Android?
 		final InputDevice device = event.getDevice();
 		if( device == null )
-			return;
+			return false;
 		
 		// maybe I need to cache this...
 		for( InputDevice.MotionRange range: device.getMotionRanges() )
